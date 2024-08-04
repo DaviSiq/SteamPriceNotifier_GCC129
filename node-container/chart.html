@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Games Prices Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Steam Games Prices</h1>
+    <canvas id="myChart"></canvas>
+    <script>
+        // Função para obter dados do gráfico
+        async function fetchData() {
+            const response = await fetch('/api/data');
+            const data = await response.json();
+            return data;
+        }
+
+        // Função para criar o gráfico
+        async function createChart() {
+            const gamesData = await fetchData();
+            const labels = gamesData.map(game => game.title);
+            const prices = gamesData.map(game => parseFloat(game.price.replace(/[^\d.-]/g, '')) || 0);
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Price',
+                        data: prices,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chama a função para criar o gráfico
+        createChart();
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "node-container",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Davi",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.3",
+    "chart.js": "^4.4.3",
+    "csv-parser": "^3.0.0",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "form-data": "^4.0.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.14"
+  }
+}

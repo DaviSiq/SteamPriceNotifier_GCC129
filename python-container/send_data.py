@@ -5,5 +5,5 @@ import requests
 data = pd.read_csv('steam_games_prices.csv')
 
 # Enviar dados para o servidor Node.js
-response = requests.post('http://node-container:3000/upload', json=data.to_dict(orient='records'))
+response = requests.post('http://localhost:3000/upload', json=data.to_dict(orient='records'))
 print(response.status_code)

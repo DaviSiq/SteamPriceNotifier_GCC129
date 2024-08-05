@@ -5,6 +5,6 @@ COPY . .
 
 RUN apt-get update && \
     apt-get install -y curl && \
-    pip install pandas requests beautifulsoup4
+    pip install pandas requests beautifulsoup4 numpy
 
 CMD ["bash", "scrape.sh"]

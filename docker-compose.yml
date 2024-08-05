@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  node:
+    build: ./node-container
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  python:
+    build: ./python-container
+    depends_on:
+      - node
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

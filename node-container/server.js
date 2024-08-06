@@ -7,6 +7,7 @@ const csv = require('csv-parser');
 const path = require('path');
 const nodemailer = require('nodemailer'); 
 const fs = require('fs'); 
+const { v4: uuidv4 } = require('uuid');  // Importando a biblioteca UUID
 
 let gamesData = [];
 const registeredEmails = []; // Array para armazenar os e-mails cadastrados
@@ -19,14 +20,13 @@ app.use('/event', express.static(path.join(__dirname, 'event')));
 
 // Configuração do transporte para envio de e-mails
 const transporter = nodemailer.createTransport({
-    host: 'bulk.smtp.mailtrap.io', 
-    port: 587,
+    service: 'Outlook365',
     auth: {
-        user: 'api', 
-        pass: 'f269a0ee0e5518f4a84238923be49e42' 
+        user: 'steamNotifyGCC129@outlook.com',
+        pass: 'Davi171201'
     },
     tls: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false // Ignorar erros de certificado
     }
 });
 
@@ -52,11 +52,12 @@ app.post('/upload', upload, (req, res) => {
 
             // Enviar notificação por e-mail
             registeredEmails.forEach(email => {
+                const uniqueId = uuidv4();  // Gerando um UUID único para cada e-mail
                 const mailOptions = {
-                    from: 'mailtrap@demomailtrap.com',
+                    from: 'steamNotifyGCC129@outlook.com',
                     to: email,
-                    subject: 'Atualização de Preços da Steam',
-                    text: `${message}\n\nVerifique os dados atualizados!` // Inclui a mensagem no e-mail
+                    subject: `Atualização de Preços da Steam - ID: ${uniqueId}`,
+                    text: `${message}\n\nVerifique os dados atualizados!\n\nEnviado em: ${new Date().toLocaleString()} - ID: ${uniqueId}`
                 };
 
                 transporter.sendMail(mailOptions, (error, info) => {
@@ -98,11 +99,12 @@ app.post('/api/register', (req, res) => {
     console.log(`E-mail cadastrado: ${email}`);
 
     // Envia a notificação de confirmação por e-mail
+    const uniqueId = uuidv4();  // Gerando um UUID único para cada e-mail
     const mailOptions = {
-        from: 'mailtrap@demomailtrap.com',
+        from: 'steamNotifyGCC129@outlook.com',
         to: email,
-        subject: 'Confirmação de Cadastro',
-        text: 'Você foi cadastrado com sucesso para receber notificações sobre promoções da Steam!'
+        subject: `Confirmação de Cadastro - ID: ${uniqueId}`,
+        text: `Você foi cadastrado com sucesso para receber notificações sobre promoções da Steam! - ID: ${uniqueId}`
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

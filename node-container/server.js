@@ -2,11 +2,11 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const upload = multer();
+const upload = multer().single('file');
 const csv = require('csv-parser');
 const path = require('path');
-const nodemailer = require('nodemailer'); // Importa nodemailer
-const axios = require('axios'); // Importa axios para requisições HTTP
+const nodemailer = require('nodemailer'); 
+const fs = require('fs'); 
 
 let gamesData = [];
 const registeredEmails = []; // Array para armazenar os e-mails cadastrados
@@ -19,11 +19,11 @@ app.use('/event', express.static(path.join(__dirname, 'event')));
 
 // Configuração do transporte para envio de e-mails
 const transporter = nodemailer.createTransport({
-    host: 'bulk.smtp.mailtrap.io', // Host do Mailtrap
-    port: 587, // Porta recomendada do Mailtrap
+    host: 'bulk.smtp.mailtrap.io', 
+    port: 587,
     auth: {
-        user: 'api', // Seu usuário do Mailtrap
-        pass: 'f269a0ee0e5518f4a84238923be49e42' // Sua senha do Mailtrap
+        user: 'api', 
+        pass: 'f269a0ee0e5518f4a84238923be49e42' 
     },
     tls: {
         rejectUnauthorized: false
@@ -31,22 +31,46 @@ const transporter = nodemailer.createTransport({
 });
 
 // Rota para upload do CSV
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', upload, (req, res) => {
     const results = [];
-    
+    const file = req.file;
+    const message = req.body.message; // Acessa a mensagem corretamente
+
+    if (!file || !message) {
+        return res.status(400).json({ message: 'Arquivo CSV e mensagem são obrigatórios.' });
+    }
+
     // Use o buffer diretamente
-    const bufferStream = require('stream').Readable.from(req.file.buffer.toString());
+    const bufferStream = require('stream').Readable.from(file.buffer);
 
     bufferStream
         .pipe(csv())
         .on('data', (data) => results.push(data))
         .on('end', () => {
             gamesData = results; // Armazena os dados do CSV
-            res.json({ message: 'Upload successful', data: gamesData });
+            res.json({ message: 'Upload bem-sucedido', data: gamesData });
+
+            // Enviar notificação por e-mail
+            registeredEmails.forEach(email => {
+                const mailOptions = {
+                    from: 'mailtrap@demomailtrap.com',
+                    to: email,
+                    subject: 'Atualização de Preços da Steam',
+                    text: `${message}\n\nVerifique os dados atualizados!` // Inclui a mensagem no e-mail
+                };
+
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.error('Erro ao enviar e-mail:', error);
+                    } else {
+                        console.log(`E-mail enviado para ${email}:`, info.response);
+                    }
+                });
+            });
         })
         .on('error', (error) => {
             console.error('Error reading CSV:', error);
-            res.status(500).json({ message: 'Error reading CSV' });
+            res.status(500).json({ message: 'Erro ao ler o CSV' });
         });
 });
 
@@ -75,7 +99,7 @@ app.post('/api/register', (req, res) => {
 
     // Envia a notificação de confirmação por e-mail
     const mailOptions = {
-        from: 'mailtrap@demomailtrap.com', // Alterado para um domínio válido
+        from: 'mailtrap@demomailtrap.com',
         to: email,
         subject: 'Confirmação de Cadastro',
         text: 'Você foi cadastrado com sucesso para receber notificações sobre promoções da Steam!'
@@ -96,42 +120,7 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'event', 'index.html'));
 });
 
-// Função para verificar mudanças no site da Steam (exemplo básico)
-const checkForUpdates = async () => {
-    try {
-        const response = await axios.get('https://store.steampowered.com/search/?specials=1'); // Substitua pela URL que deseja monitorar
-        const data = response.data;
-
-        // Aqui você pode fazer a lógica de comparação para detectar mudanças
-        const hasChanged = false; // Substitua pela sua lógica de comparação
-
-        if (hasChanged) {
-            registeredEmails.forEach(email => {
-                const mailOptions = {
-                    from: 'mailtrap@demomailtrap.com', // Alterado para um domínio válido
-                    to: email,
-                    subject: 'Mudança no Site da Steam',
-                    text: 'Uma mudança foi detectada no site da Steam. Verifique!'
-                };
-
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.error('Erro ao enviar e-mail:', error);
-                    } else {
-                        console.log(`E-mail enviado para ${email}:`, info.response);
-                    }
-                });
-            });
-        }
-    } catch (error) {
-        console.error('Erro ao verificar mudanças:', error);
-    }
-};
-
-// Configura a verificação para executar a cada 10 minutos (600000 ms)
-setInterval(checkForUpdates, 600000); // Ajuste o tempo conforme necessário
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });

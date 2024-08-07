@@ -29,6 +29,22 @@ def scrape_steam():
     
     return games
 
+def clean_data(games):
+    df = pd.DataFrame(games)
+    
+    # Substituir 'Free' por 'R$ 0.00'
+    df['price'] = df['price'].apply(lambda x: 'R$ 0.00' if x.lower() == 'free' else x)
+    
+    # Substituir 'Sem preço' por 'R$ 0.00'
+    df['price'] = df['price'].replace('Sem preço', 'R$ 0.00')
+    
+    # Remover 'R$' e converter preços para float
+    df['price'] = df['price'].str.replace('R$', '').str.replace(',', '.').astype(float)
+    
+    # Adicionar 'R$' novamente após a conversão
+    df['price'] = 'R$ ' + df['price'].astype(str)
+    
+    return df.to_dict(orient='records')
 # Função para comparar dados
 def compare_data(new_data, old_data):
     new_titles = {game['title']: game['price'] for game in new_data}
@@ -59,16 +75,17 @@ if __name__ == "__main__":
         # Captura novos dados
         new_data = scrape_steam()
         if new_data:
-            df = pd.DataFrame(new_data)
+            cleaned_data = clean_data(new_data)
+            df = pd.DataFrame(cleaned_data)
             df.to_csv('steam_games_prices.csv', index=False)
             print("Dados salvos em 'steam_games_prices.csv'.")
 
             # Comparar novos dados com os antigos
-            changes = compare_data(new_data, old_data)
+            changes = compare_data(cleaned_data, old_data)
             
             # Montar uma mensagem com todos os preços dos jogos
             message = "Preços dos jogos:\n"
-            for game in new_data:
+            for game in cleaned_data:
                 message += f"{game['title']}: {game['price']}\n"
             
             if changes:
@@ -80,6 +97,9 @@ if __name__ == "__main__":
             else:
                 print("Nenhuma mudança detectada.")
                 message += "\nNenhuma mudança detectada."
+            
+            # Aguarde um pouco para garantir que o servidor esteja pronto
+            time.sleep(10)  # Aguarda 10 segundos
             
             # Envie o CSV e a mensagem para o servidor Node.js
             try:

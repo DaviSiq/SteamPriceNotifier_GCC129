@@ -1,20 +1,18 @@
 version: '3.8'
 
 services:
-  node:
-    build: ./node-container
+  python-container:
+    build:
+      context: ./python-container
+    volumes:
+      - ./python-container:/app
+    depends_on:
+      - node-container
+
+  node-container:
+    build:
+      context: ./node-container
     ports:
       - "3000:3000"
-    networks:
-      - app-network
-
-  python:
-    build: ./python-container
-    depends_on:
-      - node
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    volumes:
+      - ./node-container:/app

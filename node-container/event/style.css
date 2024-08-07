@@ -1,5 +1,6 @@
 body {
     font-family: Arial, sans-serif;
+    background-image: url('assets/steam_background.png');;
     background-color: #f4f4f4;
     display: flex;
     justify-content: center;

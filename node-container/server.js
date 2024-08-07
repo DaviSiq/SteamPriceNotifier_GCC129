@@ -20,7 +20,9 @@ app.use('/event', express.static(path.join(__dirname, 'event')));
 
 // Configuração do transporte para envio de e-mails
 const transporter = nodemailer.createTransport({
-    service: 'Outlook365',
+    host: 'smtp.office365.com',
+    port: 587,
+    secure: false, // true para 465, falso para outros portos
     auth: {
         user: 'steamNotifyGCC129@outlook.com',
         pass: 'Davi171201'

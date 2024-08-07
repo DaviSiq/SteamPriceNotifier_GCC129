@@ -100,4 +100,4 @@ if __name__ == "__main__":
             print("Nenhum dado para salvar.")
 
         print("Aguardando 1 minuto...")
-        time.sleep(60)  # Espera 1 minuto (60 segundos)
+        time.sleep(600)  # Espera 1 minuto (60 segundos)

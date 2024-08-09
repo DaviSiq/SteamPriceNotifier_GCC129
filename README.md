@@ -38,6 +38,11 @@ Para construir as imagens Docker e executar os containers, siga os passos abaixo
 -   `docker-compose up` para subir.
 
 
+## Exemplo de email para cadastro e atualização dos preços
+
+![Alt text](readme_assets/cadastro_email.jpg)
+![Alt text](readme_assets/update_prices.jpg)
+
 ## Licença
 
 Este projeto foi desenvolvido como parte do trabalho final da disciplina de Sistemas Distribuídos (GCC129).

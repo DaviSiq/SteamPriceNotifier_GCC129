@@ -41,5 +41,3 @@ Para construir as imagens Docker e executar os containers, siga os passos abaixo
 ## Licença
 
 Este projeto foi desenvolvido como parte do trabalho final da disciplina de Sistemas Distribuídos (GCC129).
-
-![Alt text](readme_assets/notify.jpg)

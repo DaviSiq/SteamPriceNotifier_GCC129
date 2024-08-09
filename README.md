@@ -1,7 +1,10 @@
 # Scraper de Preços de Jogos da Steam
 
 Um sistema para coletar dados sobre jogos em promoção na Steam, enviando informações para um e-mail cadastrado e apresentando gráficos dos jogos. O projeto utiliza técnicas de scraping para extrair dados diretamente do site da Steam, possibilitando uma análise das ofertas disponíveis.
-
+## Tela de cadastro de email
+![Alt text](readme_assets/notify.jpg)
+## Página de gráfico
+![Alt text](readme_assets/steam_prices.jpg)
 ## Estrutura do Projeto
 
 ### Pastas e Arquivos
@@ -39,3 +42,4 @@ Para construir as imagens Docker e executar os containers, siga os passos abaixo
 
 Este projeto foi desenvolvido como parte do trabalho final da disciplina de Sistemas Distribuídos (GCC129).
 
+![Alt text](readme_assets/notify.jpg)

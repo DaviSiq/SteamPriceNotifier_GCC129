@@ -88,7 +88,7 @@ app.get('/api/data', (req, res) => {
 });
 
 // Rota para cadastrar o e-mail e enviar notificação
-app.post('/api/register', (req, res) => {
+app.post('/api/notify', (req, res) => {
     const { email } = req.body;
 
     // Verifica se o e-mail é válido
@@ -120,7 +120,7 @@ app.post('/api/register', (req, res) => {
 });
 
 // Rota para servir a página de cadastro
-app.get('/register', (req, res) => {
+app.get('/notify', (req, res) => {
     res.sendFile(path.join(__dirname, 'event', 'index.html'));
 });
 
